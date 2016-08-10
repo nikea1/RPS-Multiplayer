@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>RPS</title>
+
+	<!-- reset -->
+	<link rel="stylesheet" type="text/css" href="assets/css/reset.css">
+	<!-- bootstrap -->
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+	<!-- my style -->
+	<link rel="stylesheet" type="text/css" href="assets/css/style.css">
+</head>
+<body>
+	<div class="container" class="playarea">
+		<div><h1>RPS</h1></div>
+		<p id="playerGreeting" class="text-center">h1</p>
+		<p id="playerStatus" class="text-center">h1</p>
+		
+		<div id="player1" class="playarea">
+			<p class="P1Name">Player1</p>
+			<p class="P1choice" data-choice="rock">Rock</p>
+			<p id="chosen1" class="P1choice" data-choice="paper">Paper</p>
+			<p class="P1choice" data-choice="scissors">Scissors</p>
+			<p>Win:<span class="P1Wins">0</span> Lose:<span class="P1Loses">0</span></p>
+		</div>
+
+		<div id="results" class="playarea">
+
+			<p>Winner</p>
+			
+		</div>
+
+		<div id="player2" class="playarea">
+			<p class="P2Name">Player2</p>
+			<p class="P2choice" data-choice="rock">Rock</p>
+			<p id="chosen2" class="P2choice" data-choice="paper">Paper</p>
+			<p class="P2choice" data-choice="scissors">Scissors</p>
+			<p>Win:<span class="P2Wins">0</span> Lose:<span class="P2Loses">0</span></p>
+
+		</div>
+		
+		<div>
+			<textarea id="chatLog"></textarea>
+			<input id="chatInput" type="text" name="chat">
+			<input id="chatSend" type="submit" name="Send" value="Send">
+		</div>
+		
+	</div>
+
+	<!-- Jquery -->
+	<script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha256-cCueBR6CsyA4/9szpPfrX3s49M9vUU5BgtiJj06wt/s=" crossorigin="anonymous"></script>
+	<!-- my firebase -->
+	<script src="https://www.gstatic.com/firebasejs/3.2.1/firebase.js"></script>
+	<!-- my script -->
+	<script type="text/javascript" src="assets/javascript/app.js"></script>
+
+</body>
+</html>

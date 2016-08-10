@@ -1,0 +1,24 @@
+textarea {
+
+	resize: none;
+	width: 500px;
+	height:200px;
+}
+
+#chat {
+
+	width: 500px;
+}
+
+#chatInput{
+	width:100%;
+}
+
+.playarea{
+
+	border: 2px solid black;
+	height: 154px;
+	width: 154px;
+	text-align: center;
+}
+

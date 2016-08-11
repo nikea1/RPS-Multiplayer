@@ -1,5 +1,5 @@
 $(document).ready(function(){
-
+//$('#playerInput').hide();
 	//firebase info
 
 
@@ -12,7 +12,7 @@ $(document).ready(function(){
 	};
 	firebase.initializeApp(config);
 
-	var playerCount = 1;
+	var playerCount = 0;
 	var database = firebase.database();
 	var p1choice = "";
 	var p2choice = "";
@@ -20,19 +20,39 @@ $(document).ready(function(){
 	var p2Stats = [0,0];
 	var rps = ['rock', 'paper', 'scissors'];
   	
+  	function XOR(a,b){
+  		return (a && !b) || (b && !a)
+  	}
+
+	database.ref().on("value", function(snapShot){
+		
+		console.log(snapShot.val());
+		console.log(playerCount);
+
+		if(snapShot.child('player/1').exists())
+			playerCount = 2;
+		else
+			playerCount = 1;
+
+		if(!snapShot.child('player/1').exists() ||  XOR(snapShot.child('player/2').exists(),  snapShot.child('player/1').exists())) $('#playerInput').show();
+		console.log(playerCount);
+
+	}, function(errorObj){console.log(errorObj.code)})
 
 	$('#nameSend').on('click', function(){
 
-		var player = $('#playerName').val().trim();
+		var playerName = $('#playerName').val().trim();
 
-		database.ref()
-			.child('player')
-			.push('1')
-			.set({
-				name: player,
-				win: 0,
-				lose: 0 
-			});
+		var players = database.ref().child('player')
+			
+		players.child(playerCount).set({
+
+			name: playerName,
+			win: 0,
+			lose: 0
+
+		});
+			
 
 		$('#playerInput').hide();
 

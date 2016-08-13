@@ -11,50 +11,101 @@ $(document).ready(function(){
 	storageBucket: "",
 	};
 	firebase.initializeApp(config);
-
-	var playerCount = 0;
+	
 	var database = firebase.database();
+	var connectedRef = database.ref('.info/connected');
+	var connectionsRef = database.ref('/connections');
 	var p1choice = "";
 	var p2choice = "";
 	var p1Stats = [0,0]; //win, lose
 	var p2Stats = [0,0];
 	var rps = ['rock', 'paper', 'scissors'];
-  	
+	var player1Exists = false;
+	var player2Exists = false;
+	var currentPlayer = 0;
+  	var playerCount = 0;
+  	//creating xor function
   	function XOR(a,b){
   		return (a && !b) || (b && !a)
   	}
 
-	database.ref().on("value", function(snapShot){
+
+  	//check player values---------------------------------------------------------------------------------------
+	database.ref('player').on("value", function(snapShot){
 		
-		console.log(snapShot.val());
-		console.log(playerCount);
+		//console.log(snapShot.val());
 
-		if(snapShot.child('player/1').exists())
+		player1Exists = snapShot.child('1').exists();//checks player 1's existance
+		player2Exists = snapShot.child('2').exists();//checks player 2's existance
+
+		//keeps track of number of players
+		if(player1Exists && !player2Exists){
 			playerCount = 2;
-		else
+			
+		}
+		else if(!player1Exists){
 			playerCount = 1;
+			
+		}
 
-		if(!snapShot.child('player/1').exists() ||  XOR(snapShot.child('player/2').exists(),  snapShot.child('player/1').exists())) $('#playerInput').show();
-		console.log(playerCount);
+		//if not enough players
+		if(player1Exists && player2Exists) 
+  			database.ref('turns').set(1);
+  		else{
+  			database.ref('turns').set(null);
+  		}
 
-	}, function(errorObj){console.log(errorObj.code)})
 
+		if(currentPlayer == 0 && !player1Exists ||  XOR(player2Exists,  player1Exists)) 
+			$('#playerInput').show();
+		
+		//---------------------------
+		
+
+	}, 
+	function(errorObj){console.log(errorObj.code)});
+	//--------------------------------------------------------------------------------
+
+
+	//set player
 	$('#nameSend').on('click', function(){
-
+		console.log(playerCount);
+		currentPlayer = playerCount;
 		var playerName = $('#playerName').val().trim();
 
-		var players = database.ref().child('player')
+		players = database.ref('/player');
+
 			
-		players.child(playerCount).set({
+		
+		//
+		connectedRef.on("value", function(snap){
+
+  		if(snap.val()){
+  			
+  			var con = players.child(playerCount).push({
 
 			name: playerName,
 			win: 0,
 			lose: 0
 
 		});
-			
 
+  			con.onDisconnect().remove();
+  			console.log(player1Exists, player2Exists);
+  			
+
+  		}
+
+
+  	}, function(err){});
+
+			//console.log(player1Exists);
+		if(player1Exists && player2Exists) database.ref().child('turns').set(1);
 		$('#playerInput').hide();
+		
+
+
+
 
 	});
 
@@ -64,8 +115,9 @@ $(document).ready(function(){
 	$('#chatSend').on('click', function(){
 
 		var c = $('#chatInput').val().trim();
-
-		$('#chatLog').text(c)
+		var chat = database.ref().child('chat').push(c);
+		$('#chatInput').val('');
+		//$('#chatLog').text(c)
 
 		return false;
 	});

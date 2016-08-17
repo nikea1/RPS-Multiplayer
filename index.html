@@ -18,14 +18,14 @@
 	<div class="container" class="playarea">
 		<div><h1>RPS</h1></div>
 		<div id="playerInput" style="display:none;">
-			<input id="playerName" type="text" name="chat">
+			<input id="playerName" type="text" name="playerName">
 			<input id="nameSend" type="submit" name="Send" value="Send">
 		</div>
 		<p id="playerGreeting" class="text-center"></p>
 		<p id="playerStatus" class="text-center"></p>
 		
 		<div id="player1" class="playarea">
-			<p class="P1Name">Waiting For Player 1</p>
+			<p id="P1Name">Waiting For Player 1</p>
 			
 			<p id="P1-1" class="P1choice" data-choice="rock"></p>
 			<p id="P1-2" class="P1choice chosen1" data-choice="paper"></p>
@@ -42,7 +42,7 @@
 		</div>
 
 		<div id="player2" class="playarea">
-			<p class="P2Name">Waiting For Player 2</p>
+			<p id="P2Name">Waiting For Player 2</p>
 			<p id="P2-1" class="P2choice" data-choice="rock"></p>
 			<p id="P2-2" class="P2choice chosen2" data-choice="paper"></p>
 			<p id="P2-3" class="P2choice" data-choice="scissors"></p>

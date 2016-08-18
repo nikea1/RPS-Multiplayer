@@ -1,5 +1,5 @@
 $(document).ready(function(){
-//$('#playerInput').hide();
+
 	//firebase info
 
 
@@ -20,19 +20,21 @@ $(document).ready(function(){
 	var gameOn = false;
 	var playersTurn = 0;
 
-
+	//firebase listener (root)
 	database.ref().on("value", function(snap){
 
 		//checks if players exists
 		checkPlayer1 = snap.child('player/1').exists();
 		checkPlayer2 = snap.child('player/2').exists();
+		doesBothExist = (checkPlayer1 && checkPlayer2);
 		checkTurns = snap.child('turns').exists();
+		//store chosen value if both players are playing
 		if(checkPlayer1 && checkPlayer2 && gameOn){
 			var p1chosen = snap.child('player/1').val().chosen;
 			var p2chosen = snap.child('player/2').val().chosen;
 		}
 
-		//update guest text
+		//update guest text depending on client status
 		if(clientNum == 1)
 			$('#playerGreeting').text('Hi, '+snap.child('player/1').val().name+'! You are player 1');
 		else if(clientNum == 2)
@@ -50,8 +52,17 @@ $(document).ready(function(){
 				$('#playerStatus').text("Waiting for "+ snap.child('player/'+playersTurn).val().name +" to choose.")
 			}
 		}
+		//displays waiting status
+		else{
+			if(clientNum == 1){
+				$('#playerStatus').text("Waiting for Player 2 to join");
+			}
+			else if(clientNum == 2){
+				$('#playerStatus').text("waiting for Player 1 to join");
+			}
+		}
 
-		//display info in play area
+		//display info in Player1's play area
 		if(checkPlayer1){
 			
 			$('#P1Name').text(snap.child('player/1').val().name);
@@ -59,6 +70,7 @@ $(document).ready(function(){
 			$('#P1-Score').text('Wins: '+snap.child('player/1').val().win+' Loses: '+snap.child('player/1').val().lose);
 		}
 		
+		//display info in Player2's play area
 		if(checkPlayer2){
 			
 			$('#P2Name').text(snap.child('player/2').val().name);
@@ -95,39 +107,47 @@ $(document).ready(function(){
 			gameOn = false;
 		}
 
-		//game
-		if(gameOn && p1chosen != undefined && p2chosen != undefined){
-			//stop firebase from looping
+		//game logic
+		if(gameOn && p1chosen != undefined && p2chosen != undefined){	//checks if game is on and both player picked something
+			
+			//stop firebase from looping into infinity
 			database.ref('player/1').update({chosen: null});
 			database.ref('player/2').update({chosen: null});
 
+			//if tied
 			if(p1chosen == p2chosen){
 				console.log('tied');
+				$('#results').text('TIED!')
+				//empty chosens just in case
 				p1chosen = undefined;
 				p2chosen = undefined;
 			}
+			//when player 1 wins
 			else if((p1chosen == "rock" && p2chosen == "scissors") || 
 					(p1chosen == "paper" && p2chosen == "rock") || 
 					(p1chosen == "scissors" && p2chosen == "paper")){
 				//p1 wins
 				console.log('Player 1 wins');
-				p1chosen = undefined;
+				$('#results').text(snap.child('player/1').val().name + " Wins!"); //declare the winner
+				//empty chosens just in case
+				p1chosen = undefined;	
 				p2chosen = undefined;
 				console.log(snap.child('player/1').val().win);
-				var temp1 = snap.child('player/1').val().win;
-				var temp2 = snap.child('player/2').val().lose;
-				temp1++;
-				temp2++;
+				var temp1 = snap.child('player/1').val().win;	//get player 1 wins
+				var temp2 = snap.child('player/2').val().lose;	//get player 2 loses
+				temp1++;	//increment wins
+				temp2++;	//increment loses
 				console.log(temp1);
 
-				database.ref('player/1').update({win: temp1});
-				database.ref('player/2').update({lose: temp2});
-
-				//database.ref('player/2').update({lose: snap.child('player/2').val().lose++}); 
+				database.ref('player/1').update({win: temp1});	//update player 1 database
+				database.ref('player/2').update({lose: temp2});	//update player 2 database
 
 			}
+			//when player 2 wins
 			else{
 				console.log('Player 2 wins');
+				$('#results').text(snap.child('player/1').val().name + " Wins!");
+				//empty chosens just in case
 				p1chosen = undefined;
 				p2chosen = undefined;
 				console.log(snap.child('player/2').val().win);
@@ -142,13 +162,22 @@ $(document).ready(function(){
 				//database.ref('player/2').update({win: snap.child('player/2').val().win++}); 
 				//database.ref('player/1').update({lose: snap.child('player/1').val().lose++}); 
 			}
+
+			//lets display sit on screen for a bit then start another round
+			setTimeout(function(){
+				$('#results').text('');
+				database.ref('turns').set(1);
+				displayChoices(clientNum);
+
+			}, 3000);
+
 		}
 
 	}, 
 		//catch any problems in firebase
 		function(errorObj){
 		console.log("Something went horibly wrong! Error Code: " + errorObj.code);
-	})
+	});//end of fire base listener
 
 	//submits player info
 	$('#nameSend').on('click', function(){
@@ -205,8 +234,4 @@ $(document).ready(function(){
   		$('.chosen'+player).text(choice);
   	}
   	
-  	function playGame(){
-
-  	}
-
 });

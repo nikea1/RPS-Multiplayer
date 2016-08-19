@@ -19,9 +19,21 @@ $(document).ready(function(){
 	var checkPlayer2 = false;
 	var gameOn = false;
 	var playersTurn = 0;
+	var chatName = 'Guest'+Math.round(Math.random()*100000);
+
+
+	database.ref('chat').on("child_added", function(snapChat){
+				var line = snapChat.val();
+				console.log(line);
+				$('<div>').text(line.chatName +": "+line.chatMessage).appendTo($('#chatLog'));
+
+
+			}, function(errObj){console.log("Something went horribly wrong in chat! ErrorCode: "+errObj.code)})
 
 	//firebase listener (root)
 	database.ref().on("value", function(snap){
+
+
 
 		//checks if players exists
 		checkPlayer1 = snap.child('player/1').exists();
@@ -33,6 +45,7 @@ $(document).ready(function(){
 			var p1chosen = snap.child('player/1').val().chosen;
 			var p2chosen = snap.child('player/2').val().chosen;
 		}
+
 
 		//update guest text depending on client status
 		if(clientNum == 1)
@@ -58,7 +71,10 @@ $(document).ready(function(){
 				$('#playerStatus').text("Waiting for Player 2 to join");
 			}
 			else if(clientNum == 2){
-				$('#playerStatus').text("waiting for Player 1 to join");
+				$('#playerStatus').text("Waiting for Player 1 to join");
+			}
+			else {
+				$('#playerStatus').text("Waiting for a Player to join")
 			}
 		}
 
@@ -69,6 +85,11 @@ $(document).ready(function(){
 			if(!gameOn)clearChoices(1);
 			$('#P1-Score').text('Wins: '+snap.child('player/1').val().win+' Loses: '+snap.child('player/1').val().lose);
 		}
+		else{
+			$('#P1Name').text("Waiting for Player 1");
+			if(!gameOn)clearChoices(1);
+			$('#P1-Score').empty();
+		}
 		
 		//display info in Player2's play area
 		if(checkPlayer2){
@@ -76,6 +97,11 @@ $(document).ready(function(){
 			$('#P2Name').text(snap.child('player/2').val().name);
 			if(!gameOn)clearChoices(2);
 			$('#P2-Score').text('Wins: '+snap.child('player/2').val().win+' Loses: '+snap.child('player/2').val().lose);
+		}
+		else{
+			$('#P2Name').text("Waiting for Player 2");
+			if(!gameOn)clearChoices(2);
+			$('#P2-Score').empty();
 		}
 		
 		//detrmines which player object will be made
@@ -87,7 +113,8 @@ $(document).ready(function(){
 		}
 
 		//only show when players are needed
-		if(!(checkPlayer1 && checkPlayer2)) $('#playerInput').show();
+		if(clientNum == 0 && !(checkPlayer1 && checkPlayer2)) $('#playerInput').show();
+		else $('#playerInput').hide();
 
 
 		//sets turn counter and choices
@@ -121,7 +148,7 @@ $(document).ready(function(){
 				//empty chosens just in case
 				p1chosen = undefined;
 				p2chosen = undefined;
-			}
+			}//end of ties
 			//when player 1 wins
 			else if((p1chosen == "rock" && p2chosen == "scissors") || 
 					(p1chosen == "paper" && p2chosen == "rock") || 
@@ -142,7 +169,7 @@ $(document).ready(function(){
 				database.ref('player/1').update({win: temp1});	//update player 1 database
 				database.ref('player/2').update({lose: temp2});	//update player 2 database
 
-			}
+			}//end of player 1 wins
 			//when player 2 wins
 			else{
 				console.log('Player 2 wins');
@@ -161,7 +188,7 @@ $(document).ready(function(){
 				database.ref('player/1').update({lose: temp2});
 				//database.ref('player/2').update({win: snap.child('player/2').val().win++}); 
 				//database.ref('player/1').update({lose: snap.child('player/1').val().lose++}); 
-			}
+			}//end of player 2 win
 
 			//lets display sit on screen for a bit then start another round
 			setTimeout(function(){
@@ -171,7 +198,7 @@ $(document).ready(function(){
 
 			}, 3000);
 
-		}
+		}//end of game logic
 
 	}, 
 		//catch any problems in firebase
@@ -179,15 +206,17 @@ $(document).ready(function(){
 		console.log("Something went horibly wrong! Error Code: " + errorObj.code);
 	});//end of fire base listener
 
+	
+
 	//submits player info
 	$('#nameSend').on('click', function(){
 		clientNum = playerNum;
 		var newPlayer = database.ref('player').child(playerNum);
 
 		newPlayer.onDisconnect().remove();
-
+		chatName = $('#playerName').val().trim();
 		newPlayer.set({
-			name: $('#playerName').val().trim(),
+			name: chatName,
 			win: 0,
 			lose:0
 		})
@@ -211,7 +240,16 @@ $(document).ready(function(){
 		}
 	})
 
+	$('#chatSend').on('click', function(){
 
+		var message = $('#chatInput').val().trim();
+		database.ref('chat').push({'chatName': chatName, 'chatMessage': message});
+
+	})
+
+	function disconnectMessage(playerName){
+		$('<div>').text(playerName +" has disconnected").appendTo($('#chatLog'));
+	}
 
   	//clears out choices
   	function clearChoices(player){

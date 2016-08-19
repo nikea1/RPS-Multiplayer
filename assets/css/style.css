@@ -1,5 +1,15 @@
-textarea {
+body{
+	background-color: darkseagreen;
+}
 
+.clearfix{
+	overflow: auto;
+	clear: both;
+}
+
+#chatLog {
+
+	background-color: white;
 	resize: none;
 	width: 500px;
 	height:200px;

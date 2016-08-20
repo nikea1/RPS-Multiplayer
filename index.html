@@ -15,42 +15,49 @@
 	<link rel="stylesheet" type="text/css" href="assets/css/style.css">
 </head>
 <body>
-	<div class="container" class="playarea">
-		<div><h1>RPS</h1></div>
-		<div id="playerInput" style="display:none;">
+	<div class="container">
+		<h1>RPS</h1>
+
+		<div id="playerInput" style="display:none; text-align: center;">
 			<input id="playerName" type="text" name="playerName">
 			<input id="nameSend" type="submit" name="Send" value="Send">
+
+
 		</div>
+
 		<p id="playerGreeting" class="text-center"></p>
 		<p id="playerStatus" class="text-center"></p>
+
+		<div class="row">
+			<div class="col-md-4">
+				<div id="player1" class="playarea">
+					<p id="P1Name">Waiting For Player 1</p>
+					
+					<p id="P1-1" class="P1choice" data-choice="rock"></p>
+					<p id="P1-2" class="P1choice chosen1" data-choice="paper"></p>
+					<p id="P1-3" class="P1choice" data-choice="scissors"></p>
+					<p id="P1-Score"></p>
+
+				</div>
+			</div>
+			<div class="col-md-4">
+				<div id="results" class="playarea">
+					<p></p>
+				</div>
+			</div>
+			<div class="col-md-4">
+				<div id="player2" class="playarea">
+					<p id="P2Name">Waiting For Player 2</p>
+					<p id="P2-1" class="P2choice" data-choice="rock"></p>
+					<p id="P2-2" class="P2choice chosen2" data-choice="paper"></p>
+					<p id="P2-3" class="P2choice" data-choice="scissors"></p>
+					<p id="P2-Score"></p>
+
+				</div>
+			</div>
+		</div>
 		
-		<div id="player1" class="playarea">
-			<p id="P1Name">Waiting For Player 1</p>
-			
-			<p id="P1-1" class="P1choice" data-choice="rock"></p>
-			<p id="P1-2" class="P1choice chosen1" data-choice="paper"></p>
-			<p id="P1-3" class="P1choice" data-choice="scissors"></p>
-			<p id="P1-Score"></p>
-			<!--
-			 Win:<span class="P1Wins">0</span> Lose:<span class="P1Loses">0</span> -->
-		</div>
-
-		<div id="results" class="playarea">
-
-			<p>Winner</p>
-			
-		</div>
-
-		<div id="player2" class="playarea">
-			<p id="P2Name">Waiting For Player 2</p>
-			<p id="P2-1" class="P2choice" data-choice="rock"></p>
-			<p id="P2-2" class="P2choice chosen2" data-choice="paper"></p>
-			<p id="P2-3" class="P2choice" data-choice="scissors"></p>
-			<p id="P2-Score"></p>
-
-		</div>
-		
-		<div>
+		<div id="chat">
 			<div id="chatLog" class="clearfix"></div>
 			<input id="chatInput" type="text" name="chat">
 			<input id="chatSend" type="submit" name="Send" value="Send">
@@ -64,6 +71,5 @@
 	<script src="https://www.gstatic.com/firebasejs/3.2.1/firebase.js"></script>
 	<!-- my script -->
 	<script type="text/javascript" src="assets/javascript/app.js"></script>
-
 </body>
 </html>

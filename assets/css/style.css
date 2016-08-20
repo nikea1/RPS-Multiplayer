@@ -18,10 +18,11 @@ body{
 #chat {
 
 	width: 500px;
+	margin:auto;
 }
 
 #chatInput{
-	width:100%;
+	width:447px;
 }
 
 .playarea{
@@ -30,5 +31,6 @@ body{
 	height: 154px;
 	width: 154px;
 	text-align: center;
+	margin: auto;
 }
 

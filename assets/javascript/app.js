@@ -13,15 +13,15 @@ $(document).ready(function(){
 	firebase.initializeApp(config);
 	
 	var database = firebase.database();
-	var playerNum = 0;
-	var clientNum = 0;
-	var checkPlayer1 = false;
-	var checkPlayer2 = false;
-	var gameOn = false;
-	var playersTurn = 0;
-	var chatName = 'Guest'+Math.round(Math.random()*100000);
+	var playerNum = 0;			//firebase use this to designate a player
+	var clientNum = 0;			//lets the client internally know what player it is
+	var checkPlayer1 = false;	//check if player 1 exist
+	var checkPlayer2 = false;	//check if player 2 exists
+	var gameOn = false;			//lets firebase know if game is stared
+	var playersTurn = 0;		//used for client to keep track of turns
+	var chatName = 'Guest'+Math.round(Math.random()*100000);	//generate guest number for watchers
 
-
+	//chat listener
 	database.ref('chat').on("child_added", function(snapChat){
 				var line = snapChat.val();
 				console.log(line);
@@ -186,8 +186,7 @@ $(document).ready(function(){
 
 				database.ref('player/2').update({win: temp1});
 				database.ref('player/1').update({lose: temp2});
-				//database.ref('player/2').update({win: snap.child('player/2').val().win++}); 
-				//database.ref('player/1').update({lose: snap.child('player/1').val().lose++}); 
+				
 			}//end of player 2 win
 
 			//lets display sit on screen for a bit then start another round
@@ -225,6 +224,7 @@ $(document).ready(function(){
 
 	})
   	
+  	//player 1 click handler
 	$('.P1choice').on('click', function(){
 		if(1 == clientNum && clientNum == playersTurn){
 			database.ref('player/1').update({chosen: $(this).data('choice')});
@@ -233,6 +233,7 @@ $(document).ready(function(){
 		}
 	})
 
+	//player 2 click handler
 	$('.P2choice').on('click', function(){
 		if(2 == clientNum && clientNum == playersTurn){
 			database.ref('player/2').update({chosen: $(this).data('choice')});
@@ -240,13 +241,16 @@ $(document).ready(function(){
 		}
 	})
 
+	//chat button handler
 	$('#chatSend').on('click', function(){
 
 		var message = $('#chatInput').val().trim();
 		database.ref('chat').push({'chatName': chatName, 'chatMessage': message});
+		$('#chatInput').val('');
 
 	})
 
+	//need to figure out how and where to use this...
 	function disconnectMessage(playerName){
 		$('<div>').text(playerName +" has disconnected").appendTo($('#chatLog'));
 	}
